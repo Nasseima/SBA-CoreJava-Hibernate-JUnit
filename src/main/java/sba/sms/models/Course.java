@@ -28,34 +28,31 @@ import java.util.Set;
 
 public class Course {
 
-    @Column(name = "email" )
-    private String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    @Column(name = "name")
+    @Column(length = 50, nullable = false, name = "name")
     public String name;
 
-    @Column(name = "password")
-    private String password;
+    @Column(length = 50, nullable = false, name = "instructor")
+    public String instructor;
 
-    @Column(name = "courses")
-    @OneToMany
-    public Set<Course> courses;
+    @Column()
+    @ManyToMany (mappedBy = "courses", fetch = FetchType.EAGER, cascade = {CascadeType.DETACH,
+            CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST} )
+    public Set<Student> students;
 
-    public Course(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return Objects.equals(email, course.email) && Objects.equals(name, course.name) && Objects.equals(password, course.password) && Objects.equals(courses, course.courses);
+        return Objects.equals(name, course.name) && Objects.equals(instructor, course.instructor) && Objects.equals(students, course.students);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, name, password, courses);
+        return Objects.hash(name, instructor, students);
     }
 }

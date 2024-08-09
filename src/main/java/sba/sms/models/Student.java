@@ -27,31 +27,38 @@ import java.util.Set;
 @ToString
 
 public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, length = 50, name = "email")
+    private String email;
 
-    @Column(name = "name", length = 50, unique = true)
+    @Column(length = 50, nullable = false, name = "name")
     public String name;
 
-    @Column(name = "instructor")
-    public String instructor;
+    @Column(length = 50, nullable = false, name = "password")
+    private String password;
 
-    @Column(name = "students")
-    @ManyToMany
-    public Set<Student> students;
+    @JoinTable (name = "student_courses")
+    @ManyToMany (fetch = FetchType.EAGER, cascade = {CascadeType.DETACH,
+            CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST} )
+    public Set<Course> courses;
+
+    public Student(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return Objects.equals(name, student.name) && Objects.equals(instructor, student.instructor) && Objects.equals(students, student.students);
+        return Objects.equals(email, student.email) && Objects.equals(name, student.name) && Objects.equals(password, student.password) && Objects.equals(courses, student.courses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, instructor, students);
+        return Objects.hash(email, name, password, courses);
     }
+
 }
 
 
