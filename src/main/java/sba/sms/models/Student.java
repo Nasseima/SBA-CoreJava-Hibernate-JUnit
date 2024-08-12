@@ -25,8 +25,9 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Student {
+    @Id
     @Column(unique = true, length = 50, name = "email")
     private String email;
 
@@ -36,10 +37,20 @@ public class Student {
     @Column(length = 50, nullable = false, name = "password")
     private String password;
 
-    @JoinTable (name = "student_courses")
+    @JoinTable (name = "student_courses",
+            joinColumns = @JoinColumn(name = "student_email"),
+    inverseJoinColumns = @JoinColumn(name = "courses_id"))
+
     @ManyToMany (fetch = FetchType.EAGER, cascade = {CascadeType.DETACH,
             CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST} )
-    public Set<Course> courses;
+    Set<Course> courses = new LinkedHashSet<>();
+
+    public void addCourse(Course c){
+        courses.add(c);
+        c.getStudents().add(this);
+
+    }
+
 
     public Student(String email, String password) {
         this.email = email;

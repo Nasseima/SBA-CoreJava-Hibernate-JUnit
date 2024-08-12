@@ -27,7 +27,6 @@ import java.util.Set;
 @ToString
 
 public class Course {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
@@ -37,10 +36,9 @@ public class Course {
     @Column(length = 50, nullable = false, name = "instructor")
     public String instructor;
 
-    @Column()
     @ManyToMany (mappedBy = "courses", fetch = FetchType.EAGER, cascade = {CascadeType.DETACH,
-            CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST} )
-    public Set<Student> students;
+            CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST})
+    public Set<Student> students = new LinkedHashSet<>();
 
 
     @Override
@@ -54,5 +52,17 @@ public class Course {
     @Override
     public int hashCode() {
         return Objects.hash(name, instructor, students);
+    }
+
+    public Object getId() {
+        return null;
+    }
+
+    public Object getName() {
+        return null;
+    }
+
+    public Object getInstructor() {
+        return null;
     }
 }
