@@ -3,15 +3,10 @@ package sba.sms.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.Helper;
 
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
-
-@Entity
-@Table(name = "course")
-
-
 
 /**
  * Course is a POJO, configured as a persistent class that represents (or maps to) a table
@@ -19,50 +14,87 @@ import java.util.Set;
  * information and a mapping of 'courses' that indicate an inverse or referencing side
  * of the relationship. Implement Lombok annotations to eliminate boilerplate code.
  */
-@NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
-@Getter
+@FieldDefaults( level = AccessLevel.PRIVATE)
 @Setter
+@Getter
 @ToString
 
+
+@Entity
+@Table(name = "course")
 public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
-    @Column(length = 50, nullable = false, name = "name")
-    public String name;
+    @Column(name = "name", length = 50, nullable = false)
+    private String name;
 
-    @Column(length = 50, nullable = false, name = "instructor")
-    public String instructor;
+    @Column(name = "instructor", length = 50, nullable = false)
+    private String instructor;
 
-    @ManyToMany (mappedBy = "courses", fetch = FetchType.EAGER, cascade = {CascadeType.DETACH,
-            CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST})
-    public Set<Student> students = new LinkedHashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REMOVE,
+            CascadeType.PERSIST })
+    @JoinTable(name = "students_courses", joinColumns = @JoinColumn(name = "courses_id"), inverseJoinColumns = @JoinColumn(name = "student_email"))
+    private Set<Student> students = new HashSet<>();
 
+    // no args constructor
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Course course = (Course) o;
-        return Objects.equals(name, course.name) && Objects.equals(instructor, course.instructor) && Objects.equals(students, course.students);
+    Course() {
+
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, instructor, students);
+    // all args constructor
+
+    Course(String name, String instructor, Set<Student> students) {
+        this.name = name;
+        this.instructor = instructor;
+        this.students = students;
+
     }
 
-    public Object getId() {
-        return null;
+    // required args constructor
+    public Course(String name, String instructor) {
+        this.name = name;
+        this.instructor = instructor;
+
     }
 
-    public Object getName() {
-        return null;
+    // GETTERS AND SETTER
+
+    public int getId() {
+        return this.id;
     }
 
-    public Object getInstructor() {
-        return null;
+    public void setId(int id) {
+        this.id = id;
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getInstructor() {
+        return this.instructor;
+    }
+
+    public void setInstructor(String instructor) {
+        this.instructor = instructor;
+    }
+
+    public Set<Student> getStudents() {
+        return this.students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
+    }
+
 }

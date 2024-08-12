@@ -14,7 +14,7 @@ import java.util.Scanner;
  * SBA Core Java Hibernate/Junit
  * Business Requirement:
  * The task is to create a basic School Management System
- * where students can register for courses, and view the course assigned to them.
+ * where students can register for courses, and view the course assignccv                                                                                                                                     ed to them.
  *<br />
  * App uses <br />
  * Initialize dummy data: {@link CommandLine#addData()} <br />
@@ -31,7 +31,7 @@ import java.util.Scanner;
 
 @Log
 public class App {
-    static final  StudentService studentService = new StudentService();
+    static final StudentService studentService = new StudentService();
     static final  CourseService courseService = new CourseService();
 
     public static void main(String[] args) {

@@ -3,13 +3,13 @@ package sba.sms.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.Helper;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name = "student")
 
 /**
  * Student is a POJO, configured as a persistent class that represents (or maps to) a table
@@ -19,58 +19,79 @@ import java.util.Set;
  * Implement Lombok annotations to eliminate boilerplate code.
  */
 
-@NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity
+@Table(name = "Student")
 public class Student {
+
     @Id
-    @Column(unique = true, length = 50, name = "email")
+    @Column(length = 50, name = "email")
     private String email;
 
-    @Column(length = 50, nullable = false, name = "name")
-    public String name;
+    @Column(length = 50, name = "name")
+    private String name;
 
-    @Column(length = 50, nullable = false, name = "password")
+    @Column(length = 50, name = "password")
     private String password;
 
-    @JoinTable (name = "student_courses",
-            joinColumns = @JoinColumn(name = "student_email"),
-    inverseJoinColumns = @JoinColumn(name = "courses_id"))
+    @ManyToMany(targetEntity = Course.class, fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.REMOVE,
+            CascadeType.PERSIST })
+    @JoinTable(name = "students_courses", joinColumns = @JoinColumn(name = "student_email"), inverseJoinColumns = @JoinColumn(name = "courses_id"))
+    private Set<Course> courses = new HashSet<>();
 
-    @ManyToMany (fetch = FetchType.EAGER, cascade = {CascadeType.DETACH,
-            CascadeType.REMOVE, CascadeType.MERGE,  CascadeType.PERSIST} )
-    Set<Course> courses = new LinkedHashSet<>();
+    // no args constructor
 
-    public void addCourse(Course c){
-        courses.add(c);
-        c.getStudents().add(this);
-
+    public Student() {
     }
-
-
-    public Student(String email, String password) {
+    Student(String email, String name, String password, Set<Course> Courses) {
         this.email = email;
+        this.name = name;
+        this.password = password;
+        this.courses = courses;
+    }
+    // required args constructor
+
+    public Student(String email, String name, String password) {
+        this.email = email;
+        this.name = name;
         this.password = password;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return Objects.equals(email, student.email) && Objects.equals(name, student.name) && Objects.equals(password, student.password) && Objects.equals(courses, student.courses);
+    //  NoW WE INSERTING GETTERS  AND SETTERS
+    public String getEmail() {
+        return this.email;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(email, name, password, courses);
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Course> getCourses() {
+        return this.courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
     }
 
 }
-
-
-
